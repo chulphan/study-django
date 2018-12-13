@@ -1,0 +1,19 @@
+<h1>{{ question.question_text }}</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'poll:vote' question.id %}" method="post">
+{% csrf_token %}
+<!-- 
+    Question 객체의 choice_set 속성
+    Question 과 Choice 테이블의 관계는 1:N 관계이고, 외래키로 연결되어 있음.
+    이렇게 1:N 관계에서는 1 테이블에 연결된 N테이블의 항목들이라는 의미로,
+    xxx_set 속성을 기본으로 제공함. 즉, question.choice_set.all()이라고 하면 Question 테이블의 question 레코드에 연결된
+    Choice 테이블의 레코드 모두를 뜻한다. 템플릿 문법상 ()를 사용하지 않음.
+-->
+{% for choice in question.choice_set.all %}
+    <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}" />
+    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br/>
+{% endfor %}
+<input type="submit" value="Vote" />
+</form>
